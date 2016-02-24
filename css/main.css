@@ -1,0 +1,16 @@
+div#modelArea {
+    /* border: 3px solid orange; */
+}
+
+canvas {
+    border: 5px double blue;
+}
+
+fieldset.nodedetails span {
+    width: 70px;
+    display: inline-block;
+}
+
+fieldset.nodedetails input,select {
+    width: 250px;
+}
