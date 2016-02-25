@@ -3,67 +3,26 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Canvas</title>
+  <title>MECS Configuration</title>
   <script src="js/jquery-1.9.1.min.js"></script>
   <script src="js/jquery-ui.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script src="js/angular.min.js"></script>
   <script src="js/angular-route.min.js"></script>
   <script src="app/app.js"></script>
-  <script src="js/main.js"></script>
+  <script src="app/services/circuitStore.js"></script>
+  <script src="app/services/drawUtils.js"></script>
+  <script src="app/controllers/viewController.js"></script>
+  <script src="app/controllers/selectController.js"></script>
   <link href="css/jquery-ui.css" rel="stylesheet">
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
 </head>
 
 <body ng-app="mecs">
-  <p>Main Part</p>
-  <ng-view></ng-view>
-  <div id="modelArea">
-    <canvas width="1200" height="600" id="configstage"></canvas>
-    <div>
-      <button type="button" id="showAdd">Add Node</button>
-      <span>{{whatever}}</span>
-      <input type="text" ng-model="whatever">
-    </div>
-  </div>
-  <div id="editNode" style="display: none;">
-    <fieldset class="nodedetails">
-      <legend>Main Details</legend>
-      <span>Name:</span>
-      <input id="nodename" name="name" type="text">
-      <span>Type:</span>
-      <input id="nodetype" name="type" readonly type="text">
-      <span>Next:</span>
-      <input id="nodenext" name="next" readonly type="text">
-    </fieldset>
-  </div>
-  <div id="addNode" style="display: none">
-    <fieldset class="nodedetails">
-      <legend>Basic Details</legend>
-      <span>Type:</span>
-      <select id="selnodetype" name="selnodetype">
-                <option selected value="input">Input</option>
-                <option value="database" title="Enrich from database">Database</option>
-                <option value="filter" title="Filter message in or out">Filter</option>
-                <option value="stringsplit" title="Split a string into multiple parts">String Split</option>
-                <option value="passthrough" title="Pass Message through unaltered">Pass Through</option>
-                <option value="output" title="Output a message from the circuit">Output</option>
-                <option value="drop" title="Drop the message">Drop</option>
-            </select>
-      <span>Name:</span>
-      <input type="text" name="nodename" id="addnodename" required>
-      <span>Column:</span>
-      <select id="selcol">
-                <option selected>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-                <option>6</option>
-                <option>7</option>
-                <option>8</option>
-            </select>
-    </fieldset>
+  <div class="container">
+    <h1>MECS Circuit Configuration</h1>
+    <ng-view></ng-view>
   </div>
 </body>
 

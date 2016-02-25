@@ -1,3 +1,39 @@
-<h1>
-  This is the select part
-</h1>
+<h3>
+  Circuit Selection 
+</h3>
+<div>
+  <p>
+    There are {{select.circuits.length}} circuits
+  </p>
+  <p ng-repeat="circ in select.circuits">
+    {{circ.name}}
+  </p>
+</div>
+<div class="row">
+    <button type="button" class="btn btn-primary" ng-click="select.newCircuit()">New Circuit</button>
+</div>
+<div id="newCircuit" style="display: none;">
+  <fieldset class="circuitdetails">
+    <legend>Circuit Details</legend>
+    <span>Name:</span>
+    <input id="circuitname" name="name" type="text">
+    <span>Active:</span>
+    <select id="selIsActive">
+                <option selected value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
+    <span>Output Subject:</span>
+    <input id="circuitSubject" name="subject" type="text" placeholder="<default>">
+  </fieldset>
+  <div class="msgarea">
+    <span class="alert alert-danger" ng-if="select.chaserror">{{select.errormsg}}</span>
+  </div>
+  <div>
+    <button class="btn btn-primary" type="button" ng-click="select.createCirc()">
+      OK
+    </button>
+    <button class="btn btn-danger" type="button" ng-click="select.closeMe()">
+      Cancel
+    </button>
+  </div>
+</div>

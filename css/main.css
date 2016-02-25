@@ -1,16 +1,37 @@
 div#modelArea {
-    /* border: 3px solid orange; */
+  /* border: 3px solid orange; */
 }
 
 canvas {
-    border: 5px double blue;
+  border: 5px double blue;
 }
 
 fieldset.nodedetails span {
-    width: 70px;
-    display: inline-block;
+  width: 150px;
+  display: inline-block;
+  margin-bottom: 2px;
 }
 
-fieldset.nodedetails input,select {
-    width: 250px;
+fieldset.nodedetails input,
+select {
+  width: 200px;
+  margin-bottom: 2px;
+}
+
+fieldset.circuitdetails span {
+  width: 150px;
+  display: inline-block;
+  margin-bottom: 2px;
+}
+
+fieldset.circuitdetails input,
+select {
+  width: 200px;
+  margin-bottom: 2px;
+}
+
+div.msgarea {
+  padding: 3px;
+  margin-top: 30px;
+  height: 60px;
 }

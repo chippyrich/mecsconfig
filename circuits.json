@@ -1,0 +1,41 @@
+[{
+  "name": "Circuit 1",
+  "active": "no",
+  "output": "default",
+  "nodes": [{
+    "name": "node1",
+    "type": "passthrough",
+    "passTo": "op1",
+    "column": 2
+  },{
+    "name": "op1",
+    "type": "output",
+    "column": 3
+  }],
+  "inputs": [{
+    "name": "ip1",
+    "type": "input",
+    "passTo": "node1",
+    "column": 1
+  }]
+},{
+  "name": "Circuit 2",
+  "active": "no",
+  "output": "whatever",
+  "nodes": [{
+    "name": "node1",
+    "type": "passthrough",
+    "passTo": "op1",
+    "column": 2
+  },{
+    "name": "op1",
+    "type": "output",
+    "column": 3
+  }],
+  "inputs": [{
+    "name": "ip1",
+    "type": "input",
+    "passTo": "node1",
+    "column": 1
+  }]
+}]
