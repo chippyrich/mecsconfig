@@ -3,6 +3,7 @@
     var factory = {},
       nodecols = [],
       nodes = [],
+      inputs = [],
       canvas,
       maxcols = 8,
       c,
@@ -14,7 +15,7 @@
 
     factory.init = function(n) {
       var i;
-      for (i = 0; i <= maxcols; i+=1) {
+      for (i = 0; i <= maxcols; i += 1) {
         nodecols[i] = 0;
       }
       canvas = document.getElementById('configstage');
@@ -23,27 +24,138 @@
       }
       c = canvas.getContext('2d');
       nodes = n.nodes;
+      inputs = n.inputs;
       canvas.addEventListener("mousedown", startDrag, false);
       canvas.addEventListener("mouseup", endDrag, false);
       //canvas.addEventListener("click", identify, false);
-      //canvas.addEventListener("dblclick", editnode, false);
+      canvas.addEventListener("dblclick", editnode, false);
       canvas.addEventListener("mousemove", doDrag, false);
+      initCanvas();
+      drawCircuit();
+      console.log("drawUtils initialized");
+    }
+
+    function editnode(event) {
+      var x = event.clientX - canvas.getBoundingClientRect().left;
+      var y = event.clientY - canvas.getBoundingClientRect().top;
+      for (var i = 0; i < nodes.length; i += 1) {
+        if (x >= nodes[i].xpos && x <= nodes[i].xpos + width && y >= nodes[i].ypos && y <= nodes[i].ypos + height) {
+          showEdit(nodes[i]);
+        }
+      }
+    }
+
+    function showEdit(node) {
+      $('#nodename').val(node.name);
+      $('#nodetype').val(node.type);
+      if (node.next) {
+        $('#nodenext').val(node.next);
+      }
+      $('#editNode').dialog({
+        title: "Edit Node " + node.name,
+        buttons: {
+          OK: function() {
+            $(this).dialog("close");
+          }
+        }
+      }).dialog("option", "width", 400).dialog("open");
+    }
+
+    function initCanvas() {
+      c.clearRect(0, 0, canvas.width, canvas.height);
       c.beginPath();
       c.strokeStyle = "lightgrey";
       for (i = 170; i < 1200; i += 150) {
-        c.moveTo(i,0);
-        c.lineTo(i,canvas.getBoundingClientRect().bottom);
+        c.moveTo(i, 0);
+        c.lineTo(i, canvas.getBoundingClientRect().bottom);
       }
-      for (i = 185; i < 800; i+=150) {
-        c.moveTo(0,i);
-        c.lineTo(canvas.getBoundingClientRect().right,i);
+      for (i = 185; i < 800; i += 150) {
+        c.moveTo(0, i);
+        c.lineTo(canvas.getBoundingClientRect().right, i);
       }
       c.stroke();
-      console.log("drawUtils initialized");
     }
-    
+
+    function drawCircuit() {
+      var i;
+      for (i = 0; i < nodes.length; i += 1) {
+        nodes[i].rendered = false;
+      }
+      for (i = 0; i < inputs.length; i += 1) {
+        //inputs[i].column = i + 1;
+        inputs[i].column = 1;
+        drawNode(inputs[i]);
+        if (initNode(inputs[i].passTo, i + 1)) {
+          console.log("Drawing from " + inputs[i].name + " to " + nodes[i].passTo);
+          console.log("XPOS = " + nodes[i].xpos);
+          ip = findInputPoint(inputs[i].passTo);
+          op = findOutputPoint(inputs[i]);
+          c.beginPath();
+          c.strokeStyle = "blue";
+          c.lineWidth = 3;
+          c.moveTo(op.xpos, op.ypos);
+          c.lineTo(ip.xpos, ip.ypos);
+          c.stroke();
+          //TODO Draw the connector
+        }
+      }
+    }
+
+    function initNode(nname, col) {
+      console.log("Passed " + nname + " to initNode with col " + col);
+      for (var i = 0; i < nodes.length; i += 1) {
+        if (nodes[i].name === nname) {
+          var node = nodes[i];
+          console.log("Node " + node.name + " type " + node.type);
+          if (node.rendered) {
+            console.log("Already rendered");
+            return true;
+          }
+          node.column = col + 1;
+          drawNode(node);
+          node.rendered = true;
+          if (node.type === 'output' || nodes[i].type === 'drop') {
+            console.log("Output/Drop node. At the end of the chain.");
+            return true;
+          }
+          var ip, op;
+          if (initNode(node.passTo, col + 1)) {
+            console.log("Drawing from " + node.name + " to " + node.passTo);
+            console.log("XPOS = " + nodes[i].xpos);
+            ip = findInputPoint(node.passTo);
+            op = findOutputPoint(node);
+            c.beginPath();
+            c.strokeStyle = "blue";
+            c.lineWidth = 3;
+            c.moveTo(op.xpos, op.ypos);
+            c.lineTo(ip.xpos, ip.ypos);
+            c.stroke();
+            //TODO draw connector
+          }
+          if (node.hasfail) {
+            if (initNode(node.failTo, col + 1)) {
+              //TODO draw fail connector
+              console.log("Drawing from " + node.name + " to " + node.passTo);
+              console.log("XPOS = " + node.xpos);
+              ip = findInputPoint(node.failTo);
+              op = findOutputPoint(node);
+              c.beginPath();
+              c.strokeStyle = "blue";
+              c.lineWidth = 3;
+              c.moveTo(op.xpos, op.ypos + (height / 4));
+              c.lineTo(ip.xpos, ip.ypos);
+              c.stroke();
+            }
+          }
+          return true;
+        }
+      }
+      console.log("Didn't find node " + nname);
+      return false;
+    }
+
     factory.addNode = function(node) {
-      console.log("There are "+nodes.length+" nodes. Adding another.");
+      console.log("There are " + nodes.length + " nodes. Adding another.");
       nodes.push(node);
     }
 
@@ -75,6 +187,36 @@
       c.moveTo(startPoint.xpos, startPoint.ypos);
       c.lineTo(position.xpos, position.ypos);
       c.stroke();
+    }
+
+    function findOutputPoint(node) {
+      if (node.xpos && node.ypos) {
+        var spos = {
+          xpos: node.xpos + width - 10,
+          ypos: node.ypos + (height / 2)
+        }
+        return spos;
+      }
+    }
+
+    function findInputPoint(noden) {
+      console.log("Input point for " + noden + "...");
+      var node;
+      for (var i = 0; i < nodes.length; i += 1) {
+        if (noden === nodes[i].name) {
+          node = nodes[i];
+          console.log("Found node type " + node.type);
+        }
+      }
+      if (node.xpos && node.ypos) {
+        var epos = {
+          xpos: node.xpos + 5,
+          ypos: node.ypos + (height / 2)
+        }
+        return epos;
+      } else {
+        console.log("No xpos/ypos found");
+      }
     }
 
     function startDrag(event) {
@@ -131,7 +273,7 @@
         dragging = false;
         return;
       }
-      for (var i = 0; i < nodes.length; i++) {
+      for (var i = 0; i < nodes.length; i += 1) {
         var xp = nodes[i].xpos + 5;
         var yp = nodes[i].ypos + (height / 2) - 5;
         if (x >= xp && x <= xp + 10 && y >= yp && y <= yp + 10) {
@@ -144,9 +286,9 @@
           c.lineTo(xp + 5, yp + 5);
           c.stroke();
           console.log("Line from " + startPoint.node + " to " + nodes[i].name);
-          for (var j = 0; j < nodes.length; j++) {
+          for (var j = 0; j < nodes.length; j += 1) {
             if (nodes[j].name === startPoint.node) {
-              nodes[j].next = nodes[i].name;
+              nodes[j].passTo = nodes[i].name;
             }
           }
           dragging = false;

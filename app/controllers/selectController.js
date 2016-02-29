@@ -14,6 +14,18 @@
       }).dialog("option", "width", 400).dialog("open");
     }
 
+    select.editCircuit = function() {
+      var name = $('#circselect').val();
+      console.log("Editing " + name);
+      for (var i = 0; i < select.circuits.length; i += 1) {
+        if (name === select.circuits[i].name) {
+          circuitStore.create(select.circuits[i]);
+          $location.path('/view');
+          $route.reload();
+        }
+      }
+    }
+
     function circIsValid() {
       var name = $('#circuitname').val();
       if (name === "") {

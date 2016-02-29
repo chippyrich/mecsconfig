@@ -5,11 +5,15 @@
   <p>
     There are {{select.circuits.length}} circuits
   </p>
+  <select id="circselect">
+    <option ng-repeat="circ in select.circuits">{{circ.name}}</option>
+  </select>
   <p ng-repeat="circ in select.circuits">
     {{circ.name}}
   </p>
 </div>
 <div class="row">
+    <button type="button" class="btn btn-primary" ng-click="select.editCircuit()">Edit Circuit</button>
     <button type="button" class="btn btn-primary" ng-click="select.newCircuit()">New Circuit</button>
 </div>
 <div id="newCircuit" style="display: none;">

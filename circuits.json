@@ -24,7 +24,7 @@
   "output": "whatever",
   "nodes": [{
     "name": "node1",
-    "type": "passthrough",
+    "type": "database",
     "passTo": "op1",
     "column": 2
   },{
@@ -36,6 +36,47 @@
     "name": "ip1",
     "type": "input",
     "passTo": "node1",
+    "column": 1
+  }]
+},{
+  "name": "Real Circuit",
+  "active": "no",
+  "output": "whatever",
+  "nodes": [{
+    "name": "db1",
+    "type": "database",
+    "passTo": "op1",
+    "column": 2
+  },{
+    "name": "split1",
+    "type": "stringsplit",
+    "passTo": "filter1",
+    "column": 2
+  },{
+    "name": "filter1",
+    "type": "filter",
+    "passTo": "db1",
+    "failTo": "drop1",
+    "hasfail": true,
+    "column": 2
+  },{
+    "name": "drop1",
+    "type": "drop",
+    "column": 3
+  },{
+    "name": "op1",
+    "type": "output",
+    "column": 3
+  }],
+  "inputs": [{
+    "name": "ip1",
+    "type": "input",
+    "passTo": "split1",
+    "column": 1
+  },{
+    "name": "ip2",
+    "type": "input",
+    "passTo": "db1",
     "column": 1
   }]
 }]
